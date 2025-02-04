@@ -1,9 +1,9 @@
 name: Lint Documentation
 
 on:
-  pull_request:
-    paths:
-      - 'docs/**'  # Adjust this pattern as needed
+  [pull_request]
+    # paths:
+    #   - 'docs/**'  # Adjust this pattern as needed
 
 jobs:
   lint:
