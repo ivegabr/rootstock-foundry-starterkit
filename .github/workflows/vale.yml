@@ -31,3 +31,6 @@ jobs:
           fail_on_error: true
           # Pass additional flags to Vale. Here, we point it to the docs folder and use the central config.
           vale_flags: "--config=./docs-styles/.vale.ini docs/"
+        env:
+            REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
