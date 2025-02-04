@@ -18,17 +18,14 @@ jobs:
 
       - name: Install Vale via errata-ai/vale-action
         uses: errata-ai/vale-action@v2
-
-      - name: Install reviewdog
-        uses: reviewdog/action-setup@v1
         with:
-            reviewdog_version: latest
-        
-      - name: Run Vale and report via reviewdog
+            #   filter_mode: diff_context
+            vale_flags: "--no-exit --minAlertLevel=error"
+            reporter: github-pr-review
+            fail_on_error: true
+            filter_mode: nofilter
         env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-            # Run Vale with your central configuration and output in JSON format.
-            vale --output=JSON --config=./docs-styles/.vale.ini docs/ > vale-report.json
-            # Pipe the JSON output from Vale into reviewdog, which will post inline comments.
-            reviewdog -f=rdjson -name=vale -reporter=github-pr-review -level=error < vale-report.json
+            # Required, set by GitHub actions automatically:
+            # https://docs.github.com/en/actions/security-guides/automatic-token-authentication#about-the-github_token-secret
+            GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+            REVIEWDOG_GITHUB_API_TOKEN: ${{secrets.GITHUB_TOKEN}}
