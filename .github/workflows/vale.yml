@@ -1,0 +1,31 @@
+name: Lint Documentation
+
+on:
+  [pull_request]
+    # paths:
+    #   - 'docs/**'  # Adjust this pattern as needed
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Fetch docs-styles repository
+        run: |
+          git clone https://github.com/ivegabr/docs-styles.git ./docs-styles
+
+      - name: Install Vale via errata-ai/vale-action
+        uses: errata-ai/vale-action@v2
+        with:
+            #   filter_mode: diff_context
+            vale_flags: "--no-exit --minAlertLevel=error"
+            reporter: github-pr-review
+            fail_on_error: true
+            filter_mode: nofilter
+        # env:
+        #     # Required, set by GitHub actions automatically:
+        #     # https://docs.github.com/en/actions/security-guides/automatic-token-authentication#about-the-github_token-secret
+        #     GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        #     REVIEWDOG_GITHUB_API_TOKEN: ${{secrets.GITHUB_TOKEN}}
