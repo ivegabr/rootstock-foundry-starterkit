@@ -22,15 +22,17 @@ jobs:
           # Add Vale to PATH if necessary (adjust the path if required)
           echo "${PWD}/vale" >> $GITHUB_PATH
 
-      - name: Run Vale via reviewdog
-        uses: reviewdog/action-vale@v1
+      - name: Install reviewdog
+        uses: reviewdog/action-setup@v1
         with:
-          # Use GitHub's PR review to post comments
-          reporter: github-pr-review
-          # Fail the job if there are errors (set to false if you prefer warnings only)
-          fail_on_error: true
-          # Pass additional flags to Vale. Here, we point it to the docs folder and use the central config.
-          vale_flags: "--config=./docs-styles/.vale.ini docs/"
+            reviewdog_version: latest
+        
+      - name: Run Vale and report via reviewdog
         env:
-            REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+            # Run Vale using the central config and output results in JSON format.
+            vale --output=JSON --config=./docs-styles/.vale.ini docs/ > vale-report.json
+            # Pipe Vale's JSON output into reviewdog.
+            # The '-f=rdjson' flag tells reviewdog to expect Reviewdog's JSON format.
+            reviewdog -f=rdjson -name=vale -reporter=github-pr-review -level=error < vale-report.json
